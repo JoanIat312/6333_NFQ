@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class NoteActivity extends AppCompatActivity {
     private Note note;
     private EditText mEtTitle;
     private NFQDatabase myDB;
+    private NoteAdapter noteAdapter;
 
     private IARE_Toolbar mToolbar;
 
@@ -53,20 +55,17 @@ public class NoteActivity extends AppCompatActivity {
 
         if ( (note = (Note) getIntent().getSerializableExtra("note"))!=null ){
             update = true;
-
             mEtTitle.setText(note.getTitle());
             mEditText.fromHtml(note.getContent());
+        }else{
+            update = false;
         }
+        Log.d("STATE", String.valueOf(update));
     }
 
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
-        //load menu based on the state we are in (new, view/update/delete)
-        if(update) { //user is viewing or updating a note
-            getMenuInflater().inflate(R.menu.menu_note_view, menu);
-        } else { //user wants to create a new note
-            getMenuInflater().inflate(R.menu.menu_note_add, menu);
-        }
+        getMenuInflater().inflate(R.menu.menu_note_add, menu);
         return true;
     }
 
@@ -78,10 +77,6 @@ public class NoteActivity extends AppCompatActivity {
             case R.id.action_save_note: //save the note
                 //case R.id.action_update: //or update :P
                 validateAndSaveNote();
-                break;
-
-            case R.id.action_delete:
-                actionDelete();
                 break;
 
             case R.id.action_cancel: //cancel the note
@@ -133,14 +128,26 @@ public class NoteActivity extends AppCompatActivity {
 
     private void validateAndSaveNote() {
 
+        String title = mEtTitle.getText().toString();
+        String content = mEditText.getHtml();
         if (update){
-            note.setContent(mEditText.getHtml());
-            note.setTitle(mEtTitle.getText().toString());
+            note.setContent(content);
+            note.setTitle(title);
             myDB.getNoteDao().update(note);
             setResult(note,2);
         }else {
-            note = new Note(mEtTitle.getText().toString(), mEditText.getHtml(), System.currentTimeMillis());
-            new InsertTask(NoteActivity.this,note).execute();
+
+            if(title == null && !title.isEmpty()){
+                Toast.makeText(this, "Please have a valid title for your note.", Toast.LENGTH_SHORT).show();
+                return;
+            }else if(content == null && !content.isEmpty()){
+                Toast.makeText(this, "Please have a valid content for your note.", Toast.LENGTH_SHORT).show();
+                return;
+            }else{
+                note = new Note(mEtTitle.getText().toString(), mEditText.getHtml(), System.currentTimeMillis());
+                new InsertTask(NoteActivity.this,note).execute();
+            }
+
         }
 
     }
@@ -180,29 +187,6 @@ public class NoteActivity extends AppCompatActivity {
         }
     }
 
-    private void actionDelete() {
-        //ask user if he really wants to delete the note!
-        AlertDialog.Builder dialogDelete = new AlertDialog.Builder(this)
-                .setTitle("Delete Note")
-                .setMessage("Delete the note? This action cannot be revert.")
-                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(note != null) {
-                            MainActivity.myDB.getNoteDao().delete(note);
-                            Toast.makeText(NoteActivity.this, note.getTitle() + " has been deleted"
-                                    , Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(NoteActivity.this, "Failed to delete the note '" + note.getTitle() + "'"
-                                    , Toast.LENGTH_SHORT).show();
-                        }
-                        finish();
-                    }
-                })
-                .setNegativeButton("NO", null); //do nothing on clicking NO button :P
-
-        dialogDelete.show();
-    }
 
     /**
      * Handle cancel action
@@ -231,7 +215,7 @@ public class NoteActivity extends AppCompatActivity {
      * @return true if note is changed, otherwise false
      */
     private boolean checkNoteAltred() {
-        if(update) { //if in view/update mode
+        if(update) { //if in update mode
             return note != null && (!mEtTitle.getText().toString().equalsIgnoreCase(note.getTitle())
                     || !mEditText.getHtml().equalsIgnoreCase(note.getContent()));
         } else { //if in new note mode

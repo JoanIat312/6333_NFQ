@@ -48,7 +48,7 @@
         <com.chinalwb.are.AREditText
             android:id="@+id/arEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_below="@+id/note_et_title"
             android:layout_alignEnd="@+id/note_et_title"
             android:layout_alignRight="@+id/note_et_title"

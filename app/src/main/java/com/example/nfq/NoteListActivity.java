@@ -5,17 +5,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.lang.ref.WeakReference;
@@ -23,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NoteListActivity extends AppCompatActivity implements NoteAdapter.OnNoteItemClick{
-    private TextView textViewMsg;
     private RecyclerView recyclerView;
     private NFQDatabase myDB;
     private List<Note> notes;
@@ -87,15 +84,12 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
                 activityReference.get().notes.clear();
                 activityReference.get().notes.addAll(notes);
                 // hides empty text view
-                activityReference.get().textViewMsg.setVisibility(View.GONE);
                 activityReference.get().noteAdapter.notifyDataSetChanged();
             }
         }
     }
 
     private void initializeVies(){
-
-        textViewMsg =  (TextView) findViewById(R.id.tv__empty);
 
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(NoteListActivity.this));
@@ -127,22 +121,37 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
     public void onNoteClick(final int pos) {
         new AlertDialog.Builder(NoteListActivity.this)
                 .setTitle("Select Options")
-                .setItems(new String[]{"Delete", "Update"}, new DialogInterface.OnClickListener() {
+                .setItems(new String[]{"Update", "Delete", }, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i){
                             case 0:
-                                myDB.getNoteDao().delete(notes.get(pos));
-                                notes.remove(pos);
-                                listVisibility();
-                                break;
-                            case 1:
                                 NoteListActivity.this.pos = pos;
                                 startActivityForResult(
                                         new Intent(NoteListActivity.this,
                                                 NoteActivity.class).putExtra("note", notes.get(pos)),
                                         100);
 
+                                break;
+                            case 1:
+                                //ask user if he really wants to delete the note!
+                                AlertDialog.Builder dialogDelete = new AlertDialog.Builder(NoteListActivity.this)
+                                        .setTitle("Delete Note")
+                                        .setMessage("Delete the note? This action cannot be revert.")
+                                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                            String noteTitle = notes.get(pos).getTitle();
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                    myDB.getNoteDao().delete(notes.get(pos));
+                                                    notes.remove(pos);
+                                                    listVisibility();
+                                                    Toast.makeText(NoteListActivity.this, noteTitle + " has been deleted"
+                                                            , Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .setNegativeButton("NO", null); //do nothing on clicking NO button :P
+
+                                dialogDelete.show();
                                 break;
                         }
                     }
@@ -151,13 +160,13 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
     }
 
     private void listVisibility(){
-        int emptyMsgVisibility = View.GONE;
-        if (notes.size() == 0){ // no item to display
-            if (textViewMsg.getVisibility() == View.GONE)
-                emptyMsgVisibility = View.VISIBLE;
-        }
-        textViewMsg.setVisibility(emptyMsgVisibility);
         noteAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        displayList();
     }
 
     @Override
