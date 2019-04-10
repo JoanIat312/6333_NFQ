@@ -1,0 +1,33 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'application'
+
+apply from: '../versions.gradle' // remove when developing in library directly
+
+
+
+mainClassName = "net.dankito.richtexteditor.java.fx.RichTextEditorJavaFXDemoApp"
+
+def title = 'RichTextEditor Demo'
+
+
+compileKotlin.kotlinOptions.jvmTarget = '1.8'
+compileTestKotlin.kotlinOptions.jvmTarget = '1.8'
+
+
+dependencies {
+    compile project(':RichTextEditorJavaFX')
+}
+
+
+jar {
+    manifest {
+        attributes  'Main-Class': mainClassName,
+                'Implementation-Title': title,
+                'Implementation-Version': appVersionName
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE // to remove platform_style.css from RichTextEditorCommon
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}

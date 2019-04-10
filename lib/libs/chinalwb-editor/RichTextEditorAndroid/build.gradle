@@ -1,0 +1,214 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        // Nexus staging plugin has to be downgraded to 0.10.0 to be applicable to sub projects, see https://github.com/UweTrottmann/SeriesGuide/commit/ca33e8ad2fa6cc5c426450c8aef3417ba073ca7f
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.10.0"
+    }
+}
+
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+apply from: '../versions.gradle' // remove when developing in library directly
+
+// So after executing uploadArchives staged repository can be closed and released by executing RichTextEditorAndroid:closeAndReleaseRepository
+apply plugin: 'io.codearte.nexus-staging'
+
+
+group mavenGroup
+version appVersionName
+def mavenArtifactId = richTextEditorAndroidMavenArtifactId
+
+
+
+android {
+    compileSdkVersion androidCompileSdkVersion
+    buildToolsVersion androidBuildToolsVersion
+
+    defaultConfig {
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidTargetSdkVersion
+        versionCode appVersionCode
+        versionName appVersionName
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    configurations {
+        javadocDeps
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += [ 'src/main/kotlin' ]
+    }
+
+    // to avoid "Cannot merge new index 66989 into a non-jumbo instruction!"
+    dexOptions {
+        jumboMode true
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+
+}
+
+dependencies {
+    implementation "$mavenGroup:$richTextEditorCommonMavenArtifactId:$version"
+//    implementation project(":RichTextEditorCommon")
+
+    implementation "net.dankito.utils:android-utils:$androidUtilsVersion", {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+    }
+
+    implementation "net.dankito.filechooserdialog:filechooserdialog-android:$fileChooserDialogVersion", {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support.constraint', module: 'constraint-layout'
+        exclude module: 'recyclerview-v7'
+    }
+
+    implementation 'com.jaredrummler:colorpicker:1.0.1'
+
+    implementation "com.android.support:appcompat-v7:$appCompatVersion"
+    implementation "com.android.support:design:$appCompatVersion"
+
+    javadocDeps "com.android.support:support-annotations:$appCompatVersion"
+    javadocDeps 'com.nineoldandroids:library:2.4.0'
+    javadocDeps "com.android.support:support-v4:$appCompatVersion"
+
+    testImplementation "junit:junit:$junitVersion"
+
+    androidTestImplementation "com.android.support.test:runner:$androidTestRunnerVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion"
+}
+
+
+task copyEditorFilesToAssetsFolder(type: Copy) {
+    from project(':RichTextEditorCommon').file('./src/main/resources/editor')
+    into 'src/main/assets/editor'
+}
+
+project.afterEvaluate {
+    preBuild.dependsOn copyEditorFilesToAssetsFolder
+}
+
+clean.dependsOn copyEditorFilesToAssetsFolder
+clean.mustRunAfter copyEditorFilesToAssetsFolder
+
+
+/*          publish to maven central            */
+
+def isReleaseVersion = !version.endsWith("SNAPSHOT")
+def areSigningPropertiesSet = isPropertySet('signing.secretKeyRingFile') && isPropertySet('signing.keyId') && isPropertySet('signing.password')
+def areOssrhPropertiesSet = isPropertySet('ossrhUsername') && isPropertySet('ossrhPassword')
+
+def isPropertySet(propertyName) {
+    return properties[propertyName] != null &&  ! (properties[propertyName] as String).isEmpty()
+}
+
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.javadocDeps
+    failOnError false
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    required { isReleaseVersion && areSigningPropertiesSet && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository url: repositories.mavenLocal().url
+
+            // set ossrhUsername and ossrhPassword in your gradle.properties (in ~/.gradle/gradle.properties or project's gradle.properties)
+            if (areOssrhPropertiesSet) {
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+            }
+
+            pom.project {
+                name mavenArtifactId
+                artifactId = mavenArtifactId
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description "WYSIWYG editor for Android supporting all common formatting options."
+                url 'https://github.com/dankito/RichTextEditor'
+
+                scm {
+                    connection 'scm:git:git://github.com/dankito/RichTextEditor.git'
+                    developerConnection 'scm:git:git@github.com:dankito/RichTextEditor.git'
+                    url 'https://github.com/dankito/RichTextEditor'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'dankito'
+                        name 'Christian Dankl'
+                        email 'maven@dankito.net'
+                    }
+                }
+            }
+        }
+    }
+}
+
+nexusStaging {
+    packageGroup = "net.dankito"
+}

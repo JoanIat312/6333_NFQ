@@ -1,0 +1,91 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply from: '../versions.gradle' // remove when developing in library directly
+
+
+android {
+    compileSdkVersion androidCompileSdkVersion
+    buildToolsVersion androidBuildToolsVersion
+
+    defaultConfig {
+        applicationId "net.dankito.richtexteditor.android"
+
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidTargetSdkVersion
+
+        versionCode appVersionCode
+        versionName appVersionName
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += [ 'src/main/kotlin' ]
+    }
+
+    signingConfigs {
+        debug {
+            // so that all machines have the same signing key, no matter if app is installed from developer's machine or from Jenkins
+            storeFile file('debug-keystore.jks')
+            storePassword 'find_my_bugs_before_releasing_me'
+            keyAlias 'DebugKey'
+            keyPassword 'find_my_bugs_before_releasing_me'
+        }
+    }
+
+    // to avoid "Cannot merge new index 66989 into a non-jumbo instruction!"
+    dexOptions {
+        jumboMode true
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+
+    implementation project(':RichTextEditorAndroid')
+    implementation project(':RichTextEditorCommon')
+
+    implementation "net.dankito.utils:java-utils:$javaUtilsVersion", {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+    }
+
+    implementation "net.dankito.utils:android-utils:$androidUtilsVersion", {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+    }
+
+    implementation "net.dankito.readability4j:readability4j:$readability4JVersion"
+    implementation "org.slf4j:slf4j-android:$slf4jVersion"
+
+    implementation "com.android.support:appcompat-v7:$appCompatVersion"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    testImplementation "junit:junit:$junitVersion"
+
+    androidTestImplementation "com.android.support.test:runner:$androidTestRunnerVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion"
+}

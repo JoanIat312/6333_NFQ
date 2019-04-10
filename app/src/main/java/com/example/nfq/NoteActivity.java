@@ -1,18 +1,28 @@
 package com.example.nfq;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+;
 import com.chinalwb.are.AREditText;
 import com.chinalwb.are.AREditor;
 import com.chinalwb.are.styles.toolbar.IARE_Toolbar;
@@ -35,8 +45,9 @@ public class NoteActivity extends AppCompatActivity {
     private long mNoteCreationTime;
     private Note note;
     private EditText mEtTitle;
+    private EditText mEtKeyword;
+    private EditText mEtDefinition;
     private NFQDatabase myDB;
-    private NoteAdapter noteAdapter;
 
     private IARE_Toolbar mToolbar;
 
@@ -51,6 +62,9 @@ public class NoteActivity extends AppCompatActivity {
         initToolbar();
 
         mEtTitle = (EditText) findViewById(R.id.note_et_title);
+        mEtKeyword = (EditText) findViewById(R.id.keyword);
+        mEtDefinition = (EditText) findViewById(R.id.definition);
+
         myDB = NFQDatabase.getInstance(NoteActivity.this);
 
         if ( (note = (Note) getIntent().getSerializableExtra("note"))!=null ){
@@ -60,7 +74,29 @@ public class NoteActivity extends AppCompatActivity {
         }else{
             update = false;
         }
-        Log.d("STATE", String.valueOf(update));
+
+
+        mEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // showMyDialog();
+                Log.d("STATE", "test");
+                int startSelection=mEditText.getSelectionStart();
+                int endSelection=mEditText.getSelectionEnd();
+
+                String selectedText = mEditText.getText().toString().substring(startSelection, endSelection);
+                Log.d("STATE", selectedText);
+            }
+        });
+        mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                }
+            }
+        });
+
+        initKeywordDialog();
     }
 
     @Override
@@ -86,6 +122,37 @@ public class NoteActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initKeywordDialog(){
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(NoteActivity.this);
+                // Get the layout inflater
+                LayoutInflater inflater = NoteActivity.this.getLayoutInflater();
+
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                builder.setView(inflater.inflate(R.layout.keyword_dialog, null))
+                        .setTitle("Insert Term into Note")
+                        // Add action buttons
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                String key = mEtKeyword.getText().toString();
+                                String def = mEtDefinition.getText().toString();
+
+                                validateAndSaveKey(key, def);
+                                mEditText.getText().insert(mEditText.getSelectionStart(), Html.fromHtml("<b>" + key + "</b>: " +
+                                        def + ""));
+                            }
+                        })
+                        .setNegativeButton("Cancel", null);
+                builder.show();
+            }
+        });
     }
 
     private void initToolbar() {
@@ -121,11 +188,19 @@ public class NoteActivity extends AppCompatActivity {
         mToolbar.onActivityResult(requestCode, resultCode, data);
     }
 
+
     @Override
     public void onBackPressed() {
         actionCancel();
     }
 
+    private void validateAndSaveKey(String keyword, String def){
+        if (update){
+            int note_id = note.getId();
+            Key key = new Key(keyword, def, note_id);
+            new InsertTask(NoteActivity.this, key).execute();
+        }
+    }
     private void validateAndSaveNote() {
 
         String title = mEtTitle.getText().toString();
@@ -145,7 +220,7 @@ public class NoteActivity extends AppCompatActivity {
                 return;
             }else{
                 note = new Note(mEtTitle.getText().toString(), mEditText.getHtml(), System.currentTimeMillis());
-                new InsertTask(NoteActivity.this,note).execute();
+                //new InsertTask(NoteActivity.this,note).execute();
             }
 
         }

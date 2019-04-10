@@ -1,0 +1,50 @@
+
+ext {
+
+    mavenGroup = 'net.dankito.richtexteditor'
+
+    richTextEditorCommonMavenArtifactId = 'richtexteditor-common'
+
+    richTextEditorAndroidMavenArtifactId = 'richtexteditor-android'
+
+    richTextEditorJavaFXMavenArtifactId = 'richtexteditor-javafx'
+
+
+    appVersionName = '2.0.8'
+
+    appVersionCode = 2000800
+
+
+    kotlinVersion = '1.2.61'
+
+    androidCompileSdkVersion = 27
+    androidBuildToolsVersion = '27.0.3'
+    androidMinSdkVersion = 15
+    androidTargetSdkVersion = 27
+
+    javaUtilsVersion = '1.0.3'
+    metadataExtractorVersion = '2.11.0'
+    readability4JVersion = '1.0.1'
+    slf4jVersion = "1.7.25"
+
+
+    // Android
+
+    androidUtilsVersion = '1.0.6'
+    fileChooserDialogVersion = '1.1.5'
+    appCompatVersion = "27.1.1"
+
+    junitVersion = "4.12"
+    androidTestRunnerVersion = "1.0.2"
+    espressoVersion = "3.0.1"
+
+
+    // JavaFX
+
+    tornadoFXVersion = '1.7.17'
+
+    tornadoFXControlsVersion = '1.0.6'
+
+
+    logbackVersion = '1.2.3'
+}
