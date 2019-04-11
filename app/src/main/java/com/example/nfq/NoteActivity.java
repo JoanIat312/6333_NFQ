@@ -1,24 +1,19 @@
 package com.example.nfq;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.Html;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -39,14 +34,17 @@ import com.chinalwb.are.styles.toolitems.ARE_ToolItem_Underline;
 import com.chinalwb.are.styles.toolitems.IARE_ToolItem;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
     private boolean update; //state of the activity
-    private long mNoteCreationTime;
     private Note note;
     private EditText mEtTitle;
+    private EditText mEtKey;
+    private EditText mEtDefinition;
     private NFQDatabase myDB;
-
+    private AlertDialog keywordDialog;
     private IARE_Toolbar mToolbar;
 
     private AREditText mEditText;
@@ -63,40 +61,20 @@ public class NoteActivity extends AppCompatActivity {
 
         myDB = NFQDatabase.getInstance(NoteActivity.this);
 
-        if ( (note = (Note) getIntent().getSerializableExtra("note"))!=null ){
+        if ((note = (Note) getIntent().getSerializableExtra("note")) != null) {
             update = true;
             mEtTitle.setText(note.getTitle());
             mEditText.fromHtml(note.getContent());
-        }else{
+        } else {
             update = false;
         }
 
-
-        mEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // showMyDialog();
-                Log.d("STATE", "test");
-                int startSelection=mEditText.getSelectionStart();
-                int endSelection=mEditText.getSelectionEnd();
-
-                String selectedText = mEditText.getText().toString().substring(startSelection, endSelection);
-                Log.d("STATE", selectedText);
-            }
-        });
-        mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                }
-            }
-        });
 
         initKeywordDialog();
     }
 
     @Override
-    public boolean onCreateOptionsMenu (Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_note_add, menu);
         return true;
     }
@@ -120,7 +98,7 @@ public class NoteActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initKeywordDialog(){
+    private void initKeywordDialog() {
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
 
@@ -131,30 +109,30 @@ public class NoteActivity extends AppCompatActivity {
                 View keyInputView = inflater.inflate(R.layout.keyword_dialog, null);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(NoteActivity.this);
-
                 builder.setView(keyInputView);
+                keywordDialog = builder.create();
 
-                final EditText mEtKey = (EditText) keyInputView.findViewById(R.id.keyword);
-                final EditText mEtDefinition = (EditText) keyInputView.findViewById(R.id.definition);
+                mEtKey = (EditText) keyInputView.findViewById(R.id.keyword);
+                mEtDefinition = (EditText) keyInputView.findViewById(R.id.definition);
 
 
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
-                builder.setTitle("Insert Term into Note")
-                        // Add action buttons
-                        .setNeutralButton("Save", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                String key = mEtKey.getText().toString();
-                                String def = mEtDefinition.getText().toString();
-                                validateAndSaveKey(key, def);
-                                mEditText.getText().insert(mEditText.getSelectionStart(), Html.fromHtml("<b>" + key + "</b>: " +
-                                        def + ""));
-                                dialog.dismiss();
-                            }
-                        })
-                        .setNegativeButton("Cancel", null);
-                builder.show();
+                keywordDialog.setTitle("Insert Term into Note");
+                Button button = (Button) keyInputView.findViewById(R.id.save_button);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String key = mEtKey.getText().toString();
+                        String def = mEtDefinition.getText().toString();
+                        validateAndSaveKey(key, def);
+                        mEditText.getText().insert(mEditText.getSelectionStart(), Html.fromHtml("<div style='color:red'><b>" + key + "</b>: " +
+                                def + "</div>"));
+                        keywordDialog.dismiss();
+                    }
+                });
+
+                keywordDialog.show();
             }
         });
     }
@@ -198,47 +176,51 @@ public class NoteActivity extends AppCompatActivity {
         actionCancel();
     }
 
-    private void validateAndSaveKey(String keyword, String def){
-        if (update){
+    private void validateAndSaveKey(String keyword, String def) {
+        if (update) {
+            if ((keyword == null && !keyword.isEmpty()) || (def == null && !def.isEmpty())) {
+                mEtKey.setError("Enter FirstName");
+            }
             int note_id = note.getId();
             Key key = new Key(keyword, def, note_id);
             Log.d("STATE", keyword + " " + def);
             new InsertKey(NoteActivity.this, key).execute();
         }
     }
+
     private void validateAndSaveNote() {
 
         String title = mEtTitle.getText().toString();
         String content = mEditText.getHtml();
-        if (update){
+        if (update) {
             note.setContent(content);
             note.setTitle(title);
             myDB.getNoteDao().update(note);
-            setResult(note,2);
-        }else {
+            setResult(note, 2);
+        } else {
 
-            if(title == null && !title.isEmpty()){
+            if (title == null && !title.isEmpty()) {
                 Toast.makeText(this, "Please have a valid title for your note.", Toast.LENGTH_SHORT).show();
                 return;
-            }else if(content == null && !content.isEmpty()){
+            } else if (content == null && !content.isEmpty()) {
                 Toast.makeText(this, "Please have a valid content for your note.", Toast.LENGTH_SHORT).show();
                 return;
-            }else{
+            } else {
                 note = new Note(mEtTitle.getText().toString(), mEditText.getHtml(), System.currentTimeMillis());
-                new InsertNote(NoteActivity.this,note).execute();
+                new InsertNote(NoteActivity.this, note).execute();
             }
 
         }
 
     }
 
-    private void setResult(Note note, int flag){
-        setResult(flag,new Intent().putExtra("note",note));
+    private void setResult(Note note, int flag) {
+        setResult(flag, new Intent().putExtra("note", note));
         Toast.makeText(this, "Your note has been saved", Toast.LENGTH_SHORT).show();
         finish();
     }
 
-    private static class InsertNote extends AsyncTask<Void,Void,Boolean> {
+    private static class InsertNote extends AsyncTask<Void, Void, Boolean> {
 
         private WeakReference<NoteActivity> activityReference;
         private Note note;
@@ -260,14 +242,14 @@ public class NoteActivity extends AppCompatActivity {
         // onPostExecute runs on main thread
         @Override
         protected void onPostExecute(Boolean bool) {
-            if (bool){
-                activityReference.get().setResult(note,1);
+            if (bool) {
+                activityReference.get().setResult(note, 1);
                 activityReference.get().finish();
             }
         }
     }
 
-    private static class InsertKey extends AsyncTask<Void,Void,Boolean> {
+    private static class InsertKey extends AsyncTask<Void, Void, Boolean> {
 
         private WeakReference<NoteActivity> activityReference;
         private Key key;
@@ -289,8 +271,7 @@ public class NoteActivity extends AppCompatActivity {
         // onPostExecute runs on main thread
         @Override
         protected void onPostExecute(Boolean bool) {
-            if (bool){
-                activityReference.get().finish();
+            if (bool) {
             }
         }
     }
@@ -301,7 +282,7 @@ public class NoteActivity extends AppCompatActivity {
      */
     private void actionCancel() {
 
-        if(!checkNoteAltred()) { //if note is not altered by user (user only viewed the note/or did not write anything)
+        if (checkNoteAltred()) { //if note is not altered by user (user only viewed the note/or did not write anything)
             finish(); //just exit the activity and go back to MainActivity
         } else { //we want to remind user to decide about saving the changes or not, by showing a dialog
             AlertDialog.Builder dialogCancel = new AlertDialog.Builder(this)
@@ -320,14 +301,23 @@ public class NoteActivity extends AppCompatActivity {
 
     /**
      * Check to see if a loaded note/new note has been changed by user or not
+     *
      * @return true if note is changed, otherwise false
      */
     private boolean checkNoteAltred() {
-        if(update) { //if in update mode
-            return note != null && (!mEtTitle.getText().toString().equalsIgnoreCase(note.getTitle())
-                    || !mEditText.getHtml().equalsIgnoreCase(note.getContent()));
+        if (update) { //if in update mode
+            if (note != null) {
+                if (mEtTitle.getText().toString().equalsIgnoreCase(note.getTitle()) &&
+                        mEditText.getHtml().equalsIgnoreCase(note.getContent())) {
+                    return true;
+                }else{
+                    return false;
+                }
+            } else {
+                return false;
+            }
         } else { //if in new note mode
-            return !mEtTitle.getText().toString().isEmpty() || !mEditText.getHtml().isEmpty();
+            return false;
         }
     }
 }
