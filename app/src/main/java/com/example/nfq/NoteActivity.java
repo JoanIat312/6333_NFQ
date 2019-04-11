@@ -46,8 +46,9 @@ public class NoteActivity extends AppCompatActivity {
     private NFQDatabase myDB;
     private AlertDialog keywordDialog;
     private IARE_Toolbar mToolbar;
-
+    private ArrayList<Key> keysTobeInsert;
     private AREditText mEditText;
+    private static int currentNoteid = -1;
 
 
     @Override
@@ -60,6 +61,7 @@ public class NoteActivity extends AppCompatActivity {
         mEtTitle = (EditText) findViewById(R.id.note_et_title);
 
         myDB = NFQDatabase.getInstance(NoteActivity.this);
+        keysTobeInsert = new ArrayList<>();
 
         if ((note = (Note) getIntent().getSerializableExtra("note")) != null) {
             update = true;
@@ -179,12 +181,13 @@ public class NoteActivity extends AppCompatActivity {
     private void validateAndSaveKey(String keyword, String def) {
         if (update) {
             if ((keyword == null && !keyword.isEmpty()) || (def == null && !def.isEmpty())) {
-                mEtKey.setError("Enter FirstName");
             }
             int note_id = note.getId();
             Key key = new Key(keyword, def, note_id);
-            Log.d("STATE", keyword + " " + def);
             new InsertKey(NoteActivity.this, key).execute();
+        }else{
+            Key key = new Key(keyword, def, currentNoteid);
+            keysTobeInsert.add(key);
         }
     }
 
@@ -208,6 +211,7 @@ public class NoteActivity extends AppCompatActivity {
             } else {
                 note = new Note(mEtTitle.getText().toString(), mEditText.getHtml(), System.currentTimeMillis());
                 new InsertNote(NoteActivity.this, note).execute();
+                updateKeyList();
             }
 
         }
@@ -235,7 +239,7 @@ public class NoteActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... objs) {
             // retrieve auto incremented note id
-            activityReference.get().myDB.getNoteDao().insertAll(note);
+            currentNoteid = (int)activityReference.get().myDB.getNoteDao().insertAll(note);
             return true;
         }
 
@@ -247,6 +251,15 @@ public class NoteActivity extends AppCompatActivity {
                 activityReference.get().finish();
             }
         }
+    }
+
+    private void updateKeyList(){
+        if(!update)
+            if(currentNoteid != -1)
+            for (Key k : keysTobeInsert) {
+                k.setNote_id(currentNoteid);
+                new InsertKey(NoteActivity.this, k).execute();
+            }
     }
 
     private static class InsertKey extends AsyncTask<Void, Void, Boolean> {

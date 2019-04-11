@@ -121,7 +121,7 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
     public void onNoteClick(final int pos) {
         new AlertDialog.Builder(NoteListActivity.this)
                 .setTitle("Select Options")
-                .setItems(new String[]{"Update", "Delete", }, new DialogInterface.OnClickListener() {
+                .setItems(new String[]{"Update", "Generate Quiz", "Delete" }, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i){
@@ -134,6 +134,12 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
 
                                 break;
                             case 1:
+                                NoteListActivity.this.pos = pos;
+                                Intent intent = new Intent(NoteListActivity.this, QuizStartingActivity.class)
+                                        .putExtra("note", notes.get(pos));
+                                startActivity(intent);
+                                break;
+                            case 2:
                                 //ask user if he really wants to delete the note!
                                 AlertDialog.Builder dialogDelete = new AlertDialog.Builder(NoteListActivity.this)
                                         .setTitle("Delete Note")
@@ -142,11 +148,11 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
                                             String noteTitle = notes.get(pos).getTitle();
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                    myDB.getNoteDao().delete(notes.get(pos));
-                                                    notes.remove(pos);
-                                                    listVisibility();
-                                                    Toast.makeText(NoteListActivity.this, noteTitle + " has been deleted"
-                                                            , Toast.LENGTH_SHORT).show();
+                                                myDB.getNoteDao().delete(notes.get(pos));
+                                                notes.remove(pos);
+                                                listVisibility();
+                                                Toast.makeText(NoteListActivity.this, noteTitle + " has been deleted"
+                                                        , Toast.LENGTH_SHORT).show();
                                             }
                                         })
                                         .setNegativeButton("NO", null); //do nothing on clicking NO button :P
