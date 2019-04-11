@@ -45,8 +45,6 @@ public class NoteActivity extends AppCompatActivity {
     private long mNoteCreationTime;
     private Note note;
     private EditText mEtTitle;
-    private EditText mEtKeyword;
-    private EditText mEtDefinition;
     private NFQDatabase myDB;
 
     private IARE_Toolbar mToolbar;
@@ -62,8 +60,6 @@ public class NoteActivity extends AppCompatActivity {
         initToolbar();
 
         mEtTitle = (EditText) findViewById(R.id.note_et_title);
-        mEtKeyword = (EditText) findViewById(R.id.keyword);
-        mEtDefinition = (EditText) findViewById(R.id.definition);
 
         myDB = NFQDatabase.getInstance(NoteActivity.this);
 
@@ -127,26 +123,34 @@ public class NoteActivity extends AppCompatActivity {
     private void initKeywordDialog(){
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
+
+                LayoutInflater inflater = LayoutInflater.from(NoteActivity.this);
+                View keyInputView = inflater.inflate(R.layout.keyword_dialog, null);
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(NoteActivity.this);
-                // Get the layout inflater
-                LayoutInflater inflater = NoteActivity.this.getLayoutInflater();
+
+                builder.setView(keyInputView);
+
+                final EditText mEtKey = (EditText) keyInputView.findViewById(R.id.keyword);
+                final EditText mEtDefinition = (EditText) keyInputView.findViewById(R.id.definition);
+
 
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
-                builder.setView(inflater.inflate(R.layout.keyword_dialog, null))
-                        .setTitle("Insert Term into Note")
+                builder.setTitle("Insert Term into Note")
                         // Add action buttons
-                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                        .setNeutralButton("Save", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                String key = mEtKeyword.getText().toString();
+                                String key = mEtKey.getText().toString();
                                 String def = mEtDefinition.getText().toString();
-
                                 validateAndSaveKey(key, def);
                                 mEditText.getText().insert(mEditText.getSelectionStart(), Html.fromHtml("<b>" + key + "</b>: " +
                                         def + ""));
+                                dialog.dismiss();
                             }
                         })
                         .setNegativeButton("Cancel", null);
@@ -198,7 +202,8 @@ public class NoteActivity extends AppCompatActivity {
         if (update){
             int note_id = note.getId();
             Key key = new Key(keyword, def, note_id);
-            new InsertTask(NoteActivity.this, key).execute();
+            Log.d("STATE", keyword + " " + def);
+            new InsertKey(NoteActivity.this, key).execute();
         }
     }
     private void validateAndSaveNote() {
@@ -220,7 +225,7 @@ public class NoteActivity extends AppCompatActivity {
                 return;
             }else{
                 note = new Note(mEtTitle.getText().toString(), mEditText.getHtml(), System.currentTimeMillis());
-                //new InsertTask(NoteActivity.this,note).execute();
+                new InsertNote(NoteActivity.this,note).execute();
             }
 
         }
@@ -233,13 +238,13 @@ public class NoteActivity extends AppCompatActivity {
         finish();
     }
 
-    private static class InsertTask extends AsyncTask<Void,Void,Boolean> {
+    private static class InsertNote extends AsyncTask<Void,Void,Boolean> {
 
         private WeakReference<NoteActivity> activityReference;
         private Note note;
 
         // only retain a weak reference to the activity
-        InsertTask(NoteActivity context, Note note) {
+        InsertNote(NoteActivity context, Note note) {
             activityReference = new WeakReference<>(context);
             this.note = note;
         }
@@ -257,6 +262,34 @@ public class NoteActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean bool) {
             if (bool){
                 activityReference.get().setResult(note,1);
+                activityReference.get().finish();
+            }
+        }
+    }
+
+    private static class InsertKey extends AsyncTask<Void,Void,Boolean> {
+
+        private WeakReference<NoteActivity> activityReference;
+        private Key key;
+
+        // only retain a weak reference to the activity
+        InsertKey(NoteActivity context, Key key) {
+            activityReference = new WeakReference<>(context);
+            this.key = key;
+        }
+
+        // doInBackground methods runs on a worker thread
+        @Override
+        protected Boolean doInBackground(Void... objs) {
+            // retrieve auto incremented note id
+            activityReference.get().myDB.getKeyDao().insertAll(key);
+            return true;
+        }
+
+        // onPostExecute runs on main thread
+        @Override
+        protected void onPostExecute(Boolean bool) {
+            if (bool){
                 activityReference.get().finish();
             }
         }
