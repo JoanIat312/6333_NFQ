@@ -7,11 +7,10 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 
-@Database(entities = {Note.class, Key.class, Question.class}, version = 3, exportSchema = false)
+@Database(entities = {Note.class, Key.class}, version = 2, exportSchema = false)
 public abstract  class NFQDatabase extends RoomDatabase {
     public abstract NoteDao getNoteDao();
     public abstract  KeyDao getKeyDao();
-    public abstract  QuestionDao getQuestionDao();
 
     private static NFQDatabase nfqDB;
 
@@ -25,7 +24,7 @@ public abstract  class NFQDatabase extends RoomDatabase {
 
     private static NFQDatabase buildDatabaseINstance(Context context){
         return  Room.databaseBuilder(context, NFQDatabase.class, "nfqDB")
-                .addMigrations(MIGRATION_1_2).addMigrations(MIGRATION_2_3).allowMainThreadQueries().build();
+                .addMigrations(MIGRATION_1_2).addMigrations(MIGRATION_3_2).allowMainThreadQueries().build();
     }
 
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
@@ -36,11 +35,10 @@ public abstract  class NFQDatabase extends RoomDatabase {
 
     };
 
-    static final Migration MIGRATION_2_3 = new Migration(2, 3){
+    static final Migration MIGRATION_3_2 = new Migration(3, 2){
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-            database.execSQL("CREATE TABLE 'questions' ('id' INTEGER NOT NULL, 'note_id' INTEGER NOT NULL, 'question' TEXT, " +
-                    "'option1' TEXT, 'option2' TEXT, 'option3' TEXT, 'answerNr' INTEGER NOT NULL, PRIMARY KEY('id'))");
+            database.execSQL("DROP TABLE 'Questions'");
         }
     };
 

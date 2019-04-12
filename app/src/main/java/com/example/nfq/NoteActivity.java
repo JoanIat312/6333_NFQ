@@ -204,12 +204,8 @@ public class NoteActivity extends AppCompatActivity {
             myDB.getNoteDao().update(note);
             setResult(note, 2);
         } else {
-
-            if (title == null && !title.isEmpty()) {
+            if (title.isEmpty()) {
                 Toast.makeText(this, "Please have a valid title for your note.", Toast.LENGTH_SHORT).show();
-                return;
-            } else if (content == null && !content.isEmpty()) {
-                Toast.makeText(this, "Please have a valid content for your note.", Toast.LENGTH_SHORT).show();
                 return;
             } else {
                 note = new Note(mEtTitle.getText().toString(), mEditText.getHtml(), System.currentTimeMillis());
@@ -231,7 +227,6 @@ public class NoteActivity extends AppCompatActivity {
 
         private WeakReference<NoteActivity> activityReference;
         private Note note;
-
         // only retain a weak reference to the activity
         InsertNote(NoteActivity context, Note note) {
             activityReference = new WeakReference<>(context);
@@ -251,7 +246,7 @@ public class NoteActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean bool) {
             if (bool) {
                 activityReference.get().setResult(note, 1);
-                activityReference.get().finish();
+                //activityReference.get().finish();
             }
         }
     }
@@ -263,6 +258,7 @@ public class NoteActivity extends AppCompatActivity {
                     k.setNote_id(currentNoteId);
                     new InsertKey(NoteActivity.this, k).execute();
                 }
+                finish();
         }
     }
 

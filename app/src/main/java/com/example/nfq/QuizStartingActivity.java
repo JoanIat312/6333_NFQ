@@ -27,7 +27,7 @@ public class QuizStartingActivity  extends AppCompatActivity {
             mEtNoteTitle.setText("Quiz for " + note.getTitle());
         }else{
             Toast.makeText(this, "Opps, something is wrong. We could not find this note.", Toast.LENGTH_SHORT).show();
-            //finish();
+            finish();
         }
 
         Button buttonStartQuiz = findViewById(R.id.button_start_quiz);
@@ -36,6 +36,16 @@ public class QuizStartingActivity  extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(QuizStartingActivity.this, QuizActivity.class).putExtra("note_id", note.getId());
                 startActivity(intent);
+            }
+        });
+
+        Button buttonExitQuiz = findViewById(R.id.button_exit_quiz);
+        buttonExitQuiz.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               /* Intent intent = new Intent(QuizStartingActivity.this, NoteListActivity.class);
+                startActivity(intent);*/
+               finish();
             }
         });
 

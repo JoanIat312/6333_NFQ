@@ -4,6 +4,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -100,10 +101,23 @@ public class QuizActivity  extends AppCompatActivity {
         if (questionCounter < questionCountTotal) {
             currentQuestion = questions.get(questionCounter);
 
-            textViewQuestion.setText("Which term does the following describes: " + currentQuestion.getDefinition());
-            rb1.setText(currentQuestion.getKeyword());
-            rb2.setText(String.valueOf(currentQuestion.getNote_id()));
-            rb3.setText(String.valueOf(currentQuestion.getId()));
+            textViewQuestion.setText(Html.fromHtml("Which term does the following describes: <i>" + currentQuestion.getDefinition() + "</i>"));
+            answer = (int)(Math.random() * ((3 - 1) + 1)) + 1;
+            for(int i = 0; i < 3; i++){
+                if("rb1".contains(String.valueOf(answer))){
+                    rb1.setText(currentQuestion.getKeyword());
+                    rb2.setText(questions.get((int)(Math.random() * ((questionCountTotal)))).getKeyword());
+                    rb3.setText(questions.get((int)(Math.random() * ((questionCountTotal)))).getKeyword());
+                }else if("rb2".contains(String.valueOf(answer))){
+                    rb2.setText(currentQuestion.getKeyword());
+                    rb1.setText(questions.get((int)(Math.random() * ((questionCountTotal)))).getKeyword());
+                    rb3.setText(questions.get((int)(Math.random() * ((questionCountTotal)))).getKeyword());
+                }else{
+                    rb3.setText(currentQuestion.getKeyword());
+                    rb2.setText(questions.get((int)(Math.random() * ((questionCountTotal)))).getKeyword());
+                    rb1.setText(questions.get((int)(Math.random() * ((questionCountTotal)))).getKeyword());
+                }
+            }
 
             questionCounter++;
             textViewQuestionCount.setText("Question " + questionCounter + "/" + questionCountTotal);
@@ -119,9 +133,12 @@ public class QuizActivity  extends AppCompatActivity {
         RadioButton rbSelected = findViewById(rbGroup.getCheckedRadioButtonId());
         int answerNr = rbGroup.indexOfChild(rbSelected) + 1;
 
-        if (answerNr == 1) {
+        if (answerNr == answer) {
             score+= 10;
             textViewScore.setText("Score: " + score);
+            textViewQuestion.setText("You are correct!");
+        }else{
+            textViewQuestion.setText(Html.fromHtml("Incorrect, the correct answer is <b>" + currentQuestion.getKeyword() + "<b>"));
         }
 
         showSolution();
@@ -131,18 +148,15 @@ public class QuizActivity  extends AppCompatActivity {
         rb2.setTextColor(Color.RED);
         rb3.setTextColor(Color.RED);
 
-        switch (1) {
+        switch (answer) {
             case 1:
                 rb1.setTextColor(Color.GREEN);
-                textViewQuestion.setText("Answer 1 is correct");
                 break;
             case 2:
                 rb2.setTextColor(Color.GREEN);
-                textViewQuestion.setText("Answer 2 is correct");
                 break;
             case 3:
                 rb3.setTextColor(Color.GREEN);
-                textViewQuestion.setText("Answer 3 is correct");
                 break;
         }
 

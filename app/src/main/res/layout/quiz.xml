@@ -73,7 +73,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/radio_group"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="182dp"
+        android:backgroundTint="@color/colorPrimary"
         android:text="Confirm" />
 
 </RelativeLayout>
