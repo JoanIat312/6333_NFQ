@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Login"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="N F Q"
+        android:id="@+id/descirption"
+        android:layout_centerHorizontal="true"
+        android:textSize="50dp"
+        android:textColor="#000000"
+        />
+
+    <EditText
+        android:id="@+id/username_input"
+        android:layout_centerHorizontal="true"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:inputType="textPersonName"
+        android:layout_below="@+id/descirption"
+        android:hint="Enter your name"
+        />
+    <EditText
+        android:layout_centerInParent="true"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/username_input"
+        android:inputType="numberPassword"
+        android:hint="Enter your password"
+        android:id="@+id/password1"
+        />
+
+    <EditText
+        android:layout_centerInParent="true"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/password1"
+        android:inputType="numberPassword"
+        android:hint="Enter your password again"
+        android:id="@+id/password2"
+        />
+
+    <Button
+        android:id="@+id/confirm_btn"
+        android:layout_centerInParent="true"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/password2"
+        android:text="Confirm"
+        android:textSize="20dp"
+        android:layout_marginTop="10dp"
+
+        />
+    <Button
+        android:id="@+id/cancel_btn"
+        android:layout_centerInParent="true"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirm_btn"
+        android:text="Cancel"
+        android:textSize="20dp"
+        />
+
+</RelativeLayout>
