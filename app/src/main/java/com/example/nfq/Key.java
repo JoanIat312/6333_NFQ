@@ -2,8 +2,6 @@ package com.example.nfq;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 
@@ -12,7 +10,6 @@ public class Key {
 
         @PrimaryKey(autoGenerate = true)
         private int id;
-
 
         @ColumnInfo(name = "keyword")
         private String keyword;//title of the note
@@ -23,6 +20,9 @@ public class Key {
         @ColumnInfo(name = "note_id")
         private int note_id; //creation/update time of the note
 
+        public Key(){
+
+        }
         public Key(String keyword, String definition, int note_id) {
             this.keyword = keyword;
             this.definition = definition;

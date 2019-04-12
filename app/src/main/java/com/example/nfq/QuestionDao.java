@@ -14,8 +14,8 @@ public interface QuestionDao {
     @Query("SELECT * FROM questions")
     List<Question> getAll();
 
-    @Query("SELECT * FROM notes WHERE id =:id")
-    public Note getById(int id);
+    @Query("SELECT * FROM questions WHERE note_id =:id LIMIT 5")
+    public Question getByNoteId(int id);
 
 
     @Insert

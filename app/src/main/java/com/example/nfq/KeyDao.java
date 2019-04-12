@@ -14,6 +14,9 @@ public interface KeyDao {
     @Query("SELECT * FROM keys")
     List<Key> getAll();
 
+    @Query("SELECT * FROM keys WHERE note_id = :note_id LIMIT 5")
+    List<Key> getByKeyId(int note_id);
+
     @Insert
     void insertAll(Key key);
 

@@ -36,6 +36,8 @@ import com.chinalwb.are.styles.toolitems.IARE_ToolItem;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class NoteActivity extends AppCompatActivity {
     private boolean update; //state of the activity
@@ -48,7 +50,7 @@ public class NoteActivity extends AppCompatActivity {
     private IARE_Toolbar mToolbar;
     private ArrayList<Key> keysTobeInsert;
     private AREditText mEditText;
-    private static int currentNoteid = -1;
+    private static int currentNoteId = -1;
 
 
     @Override
@@ -128,8 +130,8 @@ public class NoteActivity extends AppCompatActivity {
                         String key = mEtKey.getText().toString();
                         String def = mEtDefinition.getText().toString();
                         validateAndSaveKey(key, def);
-                        mEditText.getText().insert(mEditText.getSelectionStart(), Html.fromHtml("<div style='color:red'><b>" + key + "</b>: " +
-                                def + "</div>"));
+                        mEditText.getText().insert(mEditText.getSelectionStart(), Html.fromHtml("<p style='color:red'><b>" + key + "</b>: " +
+                                def + "</p>"));
                         keywordDialog.dismiss();
                     }
                 });
@@ -186,10 +188,11 @@ public class NoteActivity extends AppCompatActivity {
             Key key = new Key(keyword, def, note_id);
             new InsertKey(NoteActivity.this, key).execute();
         }else{
-            Key key = new Key(keyword, def, currentNoteid);
+            Key key = new Key(keyword, def, currentNoteId);
             keysTobeInsert.add(key);
         }
     }
+
 
     private void validateAndSaveNote() {
 
@@ -239,7 +242,7 @@ public class NoteActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... objs) {
             // retrieve auto incremented note id
-            currentNoteid = (int)activityReference.get().myDB.getNoteDao().insertAll(note);
+            currentNoteId = (int)activityReference.get().myDB.getNoteDao().insertAll(note);
             return true;
         }
 
@@ -254,23 +257,26 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     private void updateKeyList(){
-        if(!update)
-            if(currentNoteid != -1)
-            for (Key k : keysTobeInsert) {
-                k.setNote_id(currentNoteid);
-                new InsertKey(NoteActivity.this, k).execute();
-            }
+        if(!update) {
+            if (currentNoteId != -1)
+                for (Key k : keysTobeInsert) {
+                    k.setNote_id(currentNoteId);
+                    new InsertKey(NoteActivity.this, k).execute();
+                }
+        }
     }
 
     private static class InsertKey extends AsyncTask<Void, Void, Boolean> {
 
         private WeakReference<NoteActivity> activityReference;
         private Key key;
+/*        private int randomAnswer = (int)(Math.random() * ((3 - 1) + 1)) + 1;*/
 
         // only retain a weak reference to the activity
         InsertKey(NoteActivity context, Key key) {
             activityReference = new WeakReference<>(context);
             this.key = key;
+
         }
 
         // doInBackground methods runs on a worker thread
