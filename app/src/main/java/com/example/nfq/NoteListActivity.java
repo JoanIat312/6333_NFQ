@@ -26,11 +26,12 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
     private List<Note> notes;
     private NoteAdapter noteAdapter;
     private int pos;
+    private static User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_note_list);
         initializeVies();
         displayList();
     }
@@ -47,7 +48,7 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
 
         switch (item.getItemId()) {
             case R.id.action_create: //run NoteActivity in new note mode
-                startActivity(new Intent(this, NoteActivity.class).putExtra("noteID", -1));
+                startActivity(new Intent(this, NoteActivity.class).putExtra("noteID", -1).putExtra("current_user", currentUser));
                 break;
 
         }
@@ -72,10 +73,11 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
 
         @Override
         protected List<Note> doInBackground(Void... voids) {
-            if (activityReference.get()!=null)
-                return activityReference.get().myDB.getNoteDao().getAll();
-            else
+            if (activityReference.get()!=null) {
+                return activityReference.get().myDB.getNoteDao().getAllByUser(currentUser.getId());
+            }else {
                 return null;
+            }
         }
 
         @Override
@@ -85,6 +87,7 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
                 activityReference.get().notes.addAll(notes);
                 // hides empty text view
                 activityReference.get().noteAdapter.notifyDataSetChanged();
+            }else{
             }
         }
     }
@@ -94,6 +97,7 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(NoteListActivity.this));
         notes = new ArrayList<>();
+        currentUser = (User) getIntent().getSerializableExtra("current_user");
         noteAdapter = new NoteAdapter(notes,NoteListActivity.this);
         recyclerView.setAdapter(noteAdapter);
     }
@@ -101,7 +105,7 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
     private View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            startActivityForResult(new Intent(NoteListActivity.this,NoteActivity.class),100);
+            startActivityForResult(new Intent(NoteListActivity.this, NoteActivity.class).putExtra("current_user", currentUser),100);
         }
     };
 
@@ -113,6 +117,8 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
             }else if( resultCode == 2){
                 notes.set(pos,(Note) data.getSerializableExtra("note"));
             }
+
+            currentUser = (User)data.getSerializableExtra("current_user");
             listVisibility();
         }
     }
@@ -129,7 +135,7 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
                                 NoteListActivity.this.pos = pos;
                                 startActivityForResult(
                                         new Intent(NoteListActivity.this,
-                                                NoteActivity.class).putExtra("note", notes.get(pos)),
+                                                NoteActivity.class).putExtra("note", notes.get(pos)).putExtra("current_user", currentUser),
                                         100);
 
                                 break;

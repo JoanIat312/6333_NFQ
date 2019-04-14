@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">NFQ</string>
     <string name="title_activity_note">NoteActivity</string>
+    <string name="folderone">Create your own folder</string>
+    <string name="foldertwo">Make your information clearer</string>
+    <string name="quota">Rome wasn not built in one day</string>
+    <string name="hint">Hint:\nMore specific\nMuch better</string>
 </resources>

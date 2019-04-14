@@ -9,16 +9,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".QuizStartingActivity"></activity>
-        <activity android:name=".QuizActivity"></activity>
-        <activity android:name=".NoteActivity"></activity>
-        <activity android:name=".NoteListActivity">
+        <activity
+            android:name=".WelcomePage"
+            android:theme="@style/AppTheme.NoActionBar"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Login" />
+        <activity android:name=".Register" />
+        <activity android:name=".HomePage" />
+        <activity android:name=".SearchPage" />
+        <activity android:name=".UserInfo" />
+        <activity android:name=".ViewActivity"></activity>
+        <activity android:name=".QuizStartingActivity"></activity>
+        <activity android:name=".QuizActivity"></activity>
+        <activity android:name=".NoteActivity"></activity>
+        <activity android:name=".NoteListActivity"></activity>
     </application>
 
 </manifest>

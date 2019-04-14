@@ -9,7 +9,7 @@ import android.arch.persistence.room.PrimaryKey;
 public class Key {
 
         @PrimaryKey(autoGenerate = true)
-        private int id;
+    private int id;
 
         @ColumnInfo(name = "keyword")
         private String keyword;//title of the note
@@ -20,9 +20,6 @@ public class Key {
         @ColumnInfo(name = "note_id")
         private int note_id; //creation/update time of the note
 
-        public Key(){
-
-        }
         public Key(String keyword, String definition, int note_id) {
             this.keyword = keyword;
             this.definition = definition;

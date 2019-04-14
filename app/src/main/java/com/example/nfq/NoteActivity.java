@@ -51,6 +51,7 @@ public class NoteActivity extends AppCompatActivity {
     private ArrayList<Key> keysTobeInsert;
     private AREditText mEditText;
     private static int currentNoteId = -1;
+    private static User currentUser;
 
 
     @Override
@@ -65,6 +66,9 @@ public class NoteActivity extends AppCompatActivity {
         myDB = NFQDatabase.getInstance(NoteActivity.this);
         keysTobeInsert = new ArrayList<>();
 
+        if ((currentUser = (User) getIntent().getSerializableExtra("current_user")) == null) {
+
+        }
         if ((note = (Note) getIntent().getSerializableExtra("note")) != null) {
             update = true;
             mEtTitle.setText(note.getTitle());
@@ -208,7 +212,7 @@ public class NoteActivity extends AppCompatActivity {
                 Toast.makeText(this, "Please have a valid title for your note.", Toast.LENGTH_SHORT).show();
                 return;
             } else {
-                note = new Note(mEtTitle.getText().toString(), mEditText.getHtml(), System.currentTimeMillis());
+                note = new Note(mEtTitle.getText().toString(), mEditText.getHtml(), currentUser.getId(), System.currentTimeMillis());
                 new InsertNote(NoteActivity.this, note).execute();
                 updateKeyList();
             }
@@ -218,8 +222,13 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     private void setResult(Note note, int flag) {
-        setResult(flag, new Intent().putExtra("note", note));
-        Toast.makeText(this, "Your note has been saved", Toast.LENGTH_SHORT).show();
+        setResult(flag, new Intent().putExtra("note", note).putExtra("current_user", currentUser));
+        if(update){
+            Toast.makeText(this, "Your note has been updated", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "Your note has been saved", Toast.LENGTH_SHORT).show();
+        }
+
         finish();
     }
 
@@ -238,6 +247,7 @@ public class NoteActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... objs) {
             // retrieve auto incremented note id
             currentNoteId = (int)activityReference.get().myDB.getNoteDao().insertAll(note);
+            Log.d("STATE", "INSERT NOTE" + currentNoteId);
             return true;
         }
 
@@ -248,6 +258,8 @@ public class NoteActivity extends AppCompatActivity {
                 activityReference.get().setResult(note, 1);
                 //activityReference.get().finish();
             }
+
+            Log.d("STATE", "insert " + bool);
         }
     }
 
@@ -258,7 +270,7 @@ public class NoteActivity extends AppCompatActivity {
                     k.setNote_id(currentNoteId);
                     new InsertKey(NoteActivity.this, k).execute();
                 }
-                finish();
+                //finish();
         }
     }
 

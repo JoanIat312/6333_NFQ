@@ -23,12 +23,16 @@ public class Note implements Serializable {
     @ColumnInfo (name = "content")
     private String content; //content of the note
 
+    @ColumnInfo (name = "user_id")
+    private int user_id;
+
     @ColumnInfo (name = "updated_at")
     private long date; //creation/update time of the note
 
-    public Note(String title, String content, long date) {
+    public Note(String title, String content, int user_id, long date) {
         this.content = content;
         this.title = title;
+        this.user_id = user_id;
         this.date = date;
     }
 
@@ -61,6 +65,15 @@ public class Note implements Serializable {
     public void setDate(long date) {
         this.date = date;
     }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
+
     /*
      * Get date time as a formatted string
      * @param context The context is used to convert the string to user set locale
