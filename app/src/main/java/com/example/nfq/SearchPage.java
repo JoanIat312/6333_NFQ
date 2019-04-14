@@ -33,6 +33,15 @@ public class SearchPage extends AppCompatActivity {
             }
         });
 
+        Button Homebtn = (Button)findViewById(R.id.home);
+        Homebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SearchPage.this,HomePage.class).putExtra("current_user", currentUser);
+                startActivity(intent);
+            }
+        });
+
         Button Notebtn = (Button)findViewById(R.id.note);
         Notebtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,13 +51,5 @@ public class SearchPage extends AppCompatActivity {
             }
         });
 
-        Button View = (Button)findViewById(R.id.view);
-        View.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SearchPage.this,ViewActivity.class).putExtra("current_user", currentUser);
-                startActivity(intent);
-            }
-        });
     }
 }

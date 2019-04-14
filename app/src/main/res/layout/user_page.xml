@@ -20,7 +20,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/dog"
+            android:background="@drawable/ic_account_circle_black_24dp"
+            android:backgroundTint="@color/black_overlay"
             android:layout_gravity="center_horizontal"
             />
 
@@ -31,6 +32,7 @@
             android:text="username"
             android:textSize="30dp"
             android:layout_gravity="center_horizontal"
+            android:textColor="@color/colorPrimary"
             android:id="@+id/current_user_name"
             />
     </LinearLayout>
@@ -39,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:layout_marginTop="5dp"
-        android:background="#A6008080"
+        android:background="@color/colorPrimary"
         android:layout_below="@+id/title"
         android:id="@+id/fenge"
         />
@@ -87,7 +89,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="20dp"
             android:layout_marginRight="5dp"
-            android:text="M O R E" />
+            android:text="More" />
 
     </RelativeLayout>
 
@@ -100,8 +102,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp"
-        >
+        android:layout_marginBottom="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -126,13 +127,14 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="5dp"
-                    android:background="@drawable/right" />
+                    android:backgroundTint="@color/black_overlay"
+                    android:background="@drawable/ic_keyboard_arrow_right_black_24dp" />
             </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:background="#A6008080" />
+                android:background="@color/colorPrimary" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -152,13 +154,14 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="5dp"
-                    android:background="@drawable/right" />
+                    android:backgroundTint="@color/black_overlay"
+                    android:background="@drawable/ic_keyboard_arrow_right_black_24dp" />
             </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:background="#A6008080"
+                android:background="@color/colorPrimary"
 
                 />
 
@@ -180,14 +183,15 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="5dp"
-                    android:background="@drawable/right" />
+                    android:backgroundTint="@color/black_overlay"
+                    android:background="@drawable/ic_keyboard_arrow_right_black_24dp" />
             </RelativeLayout>
 
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:background="#A6008080"
+                android:background="@color/colorPrimary"
 
                 />
 
@@ -209,13 +213,14 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="5dp"
-                    android:background="@drawable/right" />
+                    android:backgroundTint="@color/black_overlay"
+                    android:background="@drawable/ic_keyboard_arrow_right_black_24dp" />
             </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:background="#A6008080" />
+                android:background="@color/colorPrimary" />
 
 
             <RelativeLayout
@@ -236,13 +241,14 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="5dp"
-                    android:background="@drawable/right" />
+                    android:backgroundTint="@color/black_overlay"
+                    android:background="@drawable/ic_keyboard_arrow_right_black_24dp"/>
             </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:background="#A6008080" />
+                android:background="@color/colorPrimary" />
 
 
             <RelativeLayout
@@ -263,13 +269,14 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="5dp"
-                    android:background="@drawable/right" />
+                    android:backgroundTint="@color/black_overlay"
+                    android:background="@drawable/ic_keyboard_arrow_right_black_24dp" />
             </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:background="#A6008080" />
+                android:background="@color/colorPrimary" />
 
 
             <RelativeLayout
@@ -290,7 +297,8 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="5dp"
-                    android:background="@drawable/exit" />
+                    android:background="@drawable/ic_exit_to_app_black_24dp"
+                    android:backgroundTint="@color/black_overlay"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -302,7 +310,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:text="copyrigh:u3551831@connect.hku.hk"
+                    android:text="Created for MITE 6333, 2019 Spring"
                     android:textSize="20dp" />
             </RelativeLayout>
 
@@ -310,48 +318,56 @@
     </ScrollView>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
         android:id="@+id/banner"
-        android:background="#008080"
-        >
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:weightSum="4"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary">
 
         <Button
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:background="@drawable/home"
             android:id="@+id/home"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_home_black_24dp"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
+            android:text="Home"/>
 
         <Button
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:background="@drawable/note"
             android:id="@+id/note"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_note_add_black_24dp"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
+            android:text="Notes"/>
 
         <Button
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:background="@drawable/search"
             android:id="@+id/search"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_local_library_black_24dp"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
+            android:text="Library"/>
 
         <Button
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:background="@drawable/user"
             android:id="@+id/user"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
+            android:text="Setting"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_settings_black_24dp" />
 
     </LinearLayout>
 

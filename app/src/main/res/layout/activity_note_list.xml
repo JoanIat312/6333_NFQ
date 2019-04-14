@@ -16,52 +16,54 @@
     <LinearLayout
         android:id="@+id/banner"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="70dp"
+        android:weightSum="4"
         android:layout_alignParentBottom="true"
-        android:background="#008080"
-        android:gravity="center|bottom"
-        >
+        android:background="@color/colorPrimary">
 
         <Button
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:text="Home page"
-            android:textSize="20dp"
             android:id="@+id/home"
-            style="?android:attr/buttonStyle"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_home_black_24dp"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
+            android:text="Home"/>
 
         <Button
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:background="@drawable/note"
-            style="?android:attr/buttonStyle"
             android:id="@+id/note"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_note_add_black_24dp"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
+            android:text="Notes"/>
 
         <Button
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:background="@drawable/search"
-            style="?android:attr/buttonStyle"
             android:id="@+id/search"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_local_library_black_24dp"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
+            android:text="Library"/>
 
         <Button
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:background="@drawable/user"
-            style="?android:attr/buttonStyle"
             android:id="@+id/user"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
+            android:text="Setting"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_settings_black_24dp" />
 
     </LinearLayout>
 

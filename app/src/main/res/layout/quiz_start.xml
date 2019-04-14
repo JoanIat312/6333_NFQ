@@ -14,7 +14,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:text="Quiz"
-        android:textColor="@android:color/black"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
         android:textSize="35sp" />
 
 
@@ -24,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:backgroundTint="@color/colorPrimary"
+        android:textColor="#FFFFFF"
         android:text="Start" />
 
     <Button

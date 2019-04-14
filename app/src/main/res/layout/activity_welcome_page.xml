@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#A6008080">
+    android:background="@color/colorPrimary">
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/NFQ"
@@ -11,7 +11,8 @@
         android:layout_centerInParent="true"
         android:text="N F Q"
         android:textSize="50dp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"/>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/explain"
@@ -20,8 +21,8 @@
         android:layout_below="@+id/NFQ"
         android:layout_centerHorizontal="true"
         android:text="Note For Quiz"
-        android:textSize="25dp"
-        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="#FFFFFF"
         />
 
 </RelativeLayout>

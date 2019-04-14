@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -100,6 +101,33 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
         currentUser = (User) getIntent().getSerializableExtra("current_user");
         noteAdapter = new NoteAdapter(notes,NoteListActivity.this);
         recyclerView.setAdapter(noteAdapter);
+
+        Button Userbtn = (Button)findViewById(R.id.user);
+        Userbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(NoteListActivity.this,UserInfo.class).putExtra("current_user", currentUser);
+                startActivity(intent);
+            }
+        });
+
+        Button Homebtn = (Button)findViewById(R.id.home);
+        Homebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(NoteListActivity.this,HomePage.class).putExtra("current_user", currentUser);
+                startActivity(intent);
+            }
+        });
+
+        Button Searchbtn = (Button)findViewById(R.id.search);
+        Searchbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(NoteListActivity.this,SearchPage.class).putExtra("current_user", currentUser);
+                startActivity(intent);
+            }
+        });
     }
 
     private View.OnClickListener listener = new View.OnClickListener() {
@@ -140,10 +168,17 @@ public class NoteListActivity extends AppCompatActivity implements NoteAdapter.O
 
                                 break;
                             case 1:
-                                NoteListActivity.this.pos = pos;
-                                Intent intent = new Intent(NoteListActivity.this, QuizStartingActivity.class)
-                                        .putExtra("note", notes.get(pos));
-                                startActivity(intent);
+                                int hasKeyForQuiz = myDB.getKeyDao().getByKeyId(notes.get(pos).getId()).size();
+                                if(hasKeyForQuiz >= 1){
+                                    NoteListActivity.this.pos = pos;
+                                    Intent intent = new Intent(NoteListActivity.this, QuizStartingActivity.class)
+                                            .putExtra("note", notes.get(pos));
+                                    startActivity(intent);
+                                }else{
+                                    Toast.makeText(NoteListActivity.this, "You have not tag any terms in this notes"
+                                            , Toast.LENGTH_SHORT).show();
+                                }
+
                                 break;
                             case 2:
                                 //ask user if he really wants to delete the note!

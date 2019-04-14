@@ -12,13 +12,17 @@
         android:layout_margin="10dp"
         android:orientation="horizontal"
         >
+
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/smallsearch"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:layout_margin="10dp"
-            />
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/ic_search_black_24dp"
+            android:backgroundTint="@color/black_overlay" />
         <EditText
             android:layout_width="match_parent"
             android:layout_height="45dp"
@@ -69,57 +73,57 @@
             />
     </LinearLayout>
 
-    <TextView
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hint"
-        android:textSize="15dp"
-        />
-
     <LinearLayout
         android:id="@+id/banner"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="70dp"
+        android:weightSum="4"
         android:layout_alignParentBottom="true"
-        android:background="#008080"
-        >
+        android:background="@color/colorPrimary">
 
         <Button
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:background="@drawable/home"
             android:id="@+id/home"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_home_black_24dp"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
+            android:text="Home"/>
 
         <Button
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:background="@drawable/note"
             android:id="@+id/note"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_note_add_black_24dp"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
+            android:text="Notes"/>
 
         <Button
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:background="@drawable/search"
             android:id="@+id/search"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_local_library_black_24dp"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
+            android:text="Library"/>
 
         <Button
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:background="@drawable/user"
             android:id="@+id/user"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
+            android:text="Setting"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/ic_settings_black_24dp" />
 
     </LinearLayout>
 

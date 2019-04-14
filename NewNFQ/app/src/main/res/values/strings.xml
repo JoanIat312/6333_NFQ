@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">NewNFQ</string>
-    <string name="folderone">Create your own folder</string>
-    <string name="foldertwo">Make your information clearer</string>
-    <string name="quota">Rome wasn not built in one day</string>
-    <string name="hint">Hint:\nMore specific\nMuch better</string>
-</resources>

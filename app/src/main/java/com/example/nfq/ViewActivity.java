@@ -22,32 +22,13 @@ public class ViewActivity extends AppCompatActivity {
             Intent intent = new Intent(ViewActivity.this, Login.class);
             startActivity(intent);
         }
-        Button Searchbtn = (Button)findViewById(R.id.search);
-        Searchbtn.setOnClickListener(new View.OnClickListener() {
+        Button Return = (Button)findViewById(R.id.back);
+        Return.setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ViewActivity.this,SearchPage.class).putExtra("current_user", currentUser);
-                startActivity(intent);
+                Intent intent1 = new Intent(ViewActivity.this,HomePage.class).putExtra("current_user", currentUser);
+                startActivity(intent1);
             }
-        });
-
-        Button Userbtn = (Button)findViewById(R.id.user);
-        Userbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ViewActivity.this,UserInfo.class).putExtra("current_user", currentUser);
-                startActivity(intent);
-            }
-        });
-
-        Button Notebtn = (Button)findViewById(R.id.note);
-        Notebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ViewActivity.this,NoteListActivity.class).putExtra("current_user", currentUser);
-                startActivity(intent);
-            };
-
         });
     }
 }

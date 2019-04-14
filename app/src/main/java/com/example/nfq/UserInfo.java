@@ -47,13 +47,12 @@ public class UserInfo extends AppCompatActivity {
                 startActivity(intent1);
             }
         });
-
-        Button View = (Button)findViewById(R.id.view);
-        View.setOnClickListener(new View.OnClickListener() {
+        Button Homebtn = (Button)findViewById(R.id.home);
+        Homebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent1 = new Intent(UserInfo.this,ViewActivity.class).putExtra("current_user", currentUser);
-                startActivity(intent1);
+                Intent intent = new Intent(UserInfo.this,HomePage.class).putExtra("current_user", currentUser);
+                startActivity(intent);
             }
         });
 
